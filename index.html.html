@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Compte à rebours - Mélanie</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #ff7eb9, #3b82f6, #fcd34d);
+      font-family: "Poppins", sans-serif;
+      color: #fff;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .container {
+      text-align: center;
+      background: rgba(255,255,255,0.25);
+      padding: 60px 50px;
+      border-radius: 35px;
+      backdrop-filter: blur(15px);
+      box-shadow: 0 15px 50px rgba(0,0,0,0.4);
+      max-width: 700px;
+      width: 90%;
+      z-index: 1;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 40px;
+      font-weight: 800;
+      color: #ffe066;
+      text-shadow: 0 0 15px rgba(0,0,0,0.7);
+    }
+
+    .countdown {
+      display: flex;
+      justify-content: space-around;
+      gap: 20px;
+      flex-wrap: nowrap;
+    }
+
+    .time-box {
+      flex: 1;
+      min-width: 120px;
+      background: rgba(0,0,0,0.5);
+      border-radius: 25px;
+      padding: 30px 15px;
+      box-shadow: inset 0 0 15px rgba(0,0,0,0.4), 0 8px 20px rgba(0,0,0,0.3);
+      transition: transform 0.3s ease, background 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+    .time-box:hover {
+      transform: translateY(-5px) scale(1.05);
+      background: rgba(255,255,255,0.3);
+    }
+
+    .number {
+      font-size: 3rem;
+      font-weight: 900;
+      color: #facc15;
+      text-shadow: 0 0 15px #fbbf24, 0 0 25px rgba(0,0,0,0.6), 0 0 35px #fcd34d;
+      position: relative;
+      animation: glowPulse 2s infinite alternate;
+    }
+
+    @keyframes glowPulse {
+      from { text-shadow: 0 0 15px #fbbf24, 0 0 25px rgba(0,0,0,0.6), 0 0 35px #fcd34d; }
+      to { text-shadow: 0 0 25px #fbbf24, 0 0 35px rgba(0,0,0,0.6), 0 0 50px #fcd34d; }
+    }
+
+    .label {
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      opacity: 0.85;
+      letter-spacing: 1.5px;
+      margin-top: 8px;
+    }
+
+    .confetti {
+      position: absolute;
+      width: 8px;
+      height: 14px;
+      border-radius: 3px;
+      top: -20px;
+      animation: fall linear infinite;
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(0) rotate(0deg); }
+      100% { transform: translateY(110vh) rotate(360deg); }
+    }
+
+    .spark {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background-color: #fffacd;
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: sparkMove 1s linear infinite;
+    }
+
+    @keyframes sparkMove {
+      0% { transform: translate(0,0) scale(0.5); opacity: 1; }
+      50% { transform: translate(8px,-8px) scale(1); opacity: 0.5; }
+      100% { transform: translate(-8px,8px) scale(0.5); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Mélanie a 29 ans pendant encore :</h1>
+    <div id="countdown" class="countdown">
+      <div class="time-box" id="box-days"><span id="days" class="number">00</span><span class="label">Jours</span></div>
+      <div class="time-box" id="box-hours"><span id="hours" class="number">00</span><span class="label">Heures</span></div>
+      <div class="time-box" id="box-minutes"><span id="minutes" class="number">00</span><span class="label">Minutes</span></div>
+      <div class="time-box" id="box-seconds"><span id="seconds" class="number">00</span><span class="label">Secondes</span></div>
+    </div>
+  </div>
+
+  <script>
+    // Confettis animés
+    function createConfetti() {
+      const confetti = document.createElement('div');
+      confetti.classList.add('confetti');
+      confetti.style.left = Math.random() * 100 + 'vw';
+      confetti.style.backgroundColor = ['#facc15','#ef4444','#22d3ee','#a78bfa','#34d399'][Math.floor(Math.random()*5)];
+      confetti.style.animationDuration = 3 + Math.random() * 3 + 's';
+      document.body.appendChild(confetti);
+      setTimeout(() => confetti.remove(), 6000);
+    }
+    setInterval(createConfetti, 200);
+
+    // Étincelles autour des chiffres
+    function createSparks() {
+      const boxes = ['box-days','box-hours','box-minutes','box-seconds'];
+      boxes.forEach(id => {
+        const box = document.getElementById(id);
+        const spark = document.createElement('div');
+        spark.classList.add('spark');
+        spark.style.top = Math.random() * 50 + '%';
+        spark.style.left = Math.random() * 80 + '%';
+        box.appendChild(spark);
+        setTimeout(() => spark.remove(), 1000);
+      });
+    }
+    setInterval(createSparks, 300);
+
+    // Compte à rebours en temps réel
+    const targetDate = new Date(2026, 10, 10, 6, 55, 0);
+    function updateCountdown() {
+      const now = new Date();
+      const diff = targetDate - now;
+      if(diff < 0) return;
+
+      const days = Math.floor(diff / (1000*60*60*24));
+      const hours = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+      const minutes = Math.floor((diff % (1000*60*60)) / (1000*60));
+      const seconds = Math.floor((diff % (1000*60)) / 1000);
+
+      document.getElementById('days').textContent = String(days).padStart(2,'0');
+      document.getElementById('hours').textContent = String(hours).padStart(2,'0');
+      document.getElementById('minutes').textContent = String(minutes).padStart(2,'0');
+      document.getElementById('seconds').textContent = String(seconds).padStart(2,'0');
+    }
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  </script>
+</body>
+</html>
