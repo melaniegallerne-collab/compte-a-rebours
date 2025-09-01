@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Compte à rebours - Fanny</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #000;
+      background-image: radial-gradient(circle at center, #1a1a1a, #000 98%);
+      font-family: "Poppins", sans-serif;
+      color: #ccc;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Brouillard funéraire sophistiqué */
+    .fog {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(rgba(255,255,255,0.06), rgba(0,0,0,0) 85%);
+      pointer-events: none;
+      animation: fogMove 80s linear infinite alternate;
+      z-index: 0;
+      mix-blend-mode: overlay;
+    }
+
+    @keyframes fogMove {
+      0% { transform: translateX(0) translateY(0); }
+      50% { transform: translateX(80px) translateY(20px); }
+      100% { transform: translateX(160px) translateY(0); }
+    }
+
+    .container {
+      text-align: center;
+      background: rgba(20,20,20,0.98);
+      padding: 70px 60px;
+      border-radius: 25px;
+      box-shadow: 0 20px 80px rgba(0,0,0,0.95);
+      max-width: 700px;
+      width: 90%;
+      position: relative;
+      z-index: 1;
+      border-top: 4px solid #3a0000;
+      border-bottom: 4px solid #3a0000;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 50px;
+      font-weight: 800;
+      color: #bbb;
+      text-shadow: 0 0 30px #000, 0 0 50px #111;
+    }
+
+    .countdown {
+      display: flex;
+      justify-content: space-around;
+      gap: 25px;
+      flex-wrap: nowrap;
+    }
+
+    .time-box {
+      flex: 1;
+      min-width: 130px;
+      background: rgba(0,0,0,0.7);
+      border-radius: 20px;
+      padding: 30px 20px;
+      box-shadow: inset 0 0 30px rgba(0,0,0,0.85), 0 10px 40px rgba(0,0,0,0.95);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.4s;
+      position: relative;
+    }
+
+    .time-box:hover {
+      transform: translateY(-7px) scale(1.08);
+      box-shadow: inset 0 0 40px rgba(0,0,0,0.9), 0 15px 50px rgba(0,0,0,1);
+    }
+
+    .number {
+      font-size: 3.2rem;
+      font-weight: 900;
+      color: #3a0000;
+      text-shadow: 0 0 30px #1a0000, 0 0 60px #3a0000, 0 0 100px rgba(0,0,0,1);
+      position: relative;
+      animation: glowPulse 2s infinite alternate;
+    }
+
+    @keyframes glowPulse {
+      from { text-shadow: 0 0 30px #1a0000, 0 0 60px #3a0000, 0 0 100px rgba(0,0,0,1); }
+      to { text-shadow: 0 0 45px #1a0000, 0 0 90px #3a0000, 0 0 150px rgba(0,0,0,1); }
+    }
+
+    .label {
+      font-size: 1rem;
+      text-transform: uppercase;
+      opacity: 0.9;
+      margin-top: 8px;
+      letter-spacing: 1.5px;
+      color: #999;
+    }
+
+    .particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background-color: rgba(255,255,255,0.015);
+      border-radius: 50%;
+      animation: particleMove linear infinite;
+      z-index: 0;
+      mix-blend-mode: overlay;
+    }
+
+    @keyframes particleMove {
+      0% { transform: translateY(0) translateX(0); opacity: 0.02; }
+      50% { opacity: 0.05; }
+      100% { transform: translateY(100vh) translateX(80px); opacity: 0; }
+    }
+
+  </style>
+</head>
+<body>
+  <div class="fog"></div>
+  <div class="container">
+    <h1>Fanny a maintenant 30 ans depuis déjà :</h1>
+    <div class="countdown">
+      <div class="time-box"><span id="days" class="number">00</span><span class="label">Jours</span></div>
+      <div class="time-box"><span id="hours" class="number">00</span><span class="label">Heures</span></div>
+      <div class="time-box"><span id="minutes" class="number">00</span><span class="label">Minutes</span></div>
+      <div class="time-box"><span id="seconds" class="number">00</span><span class="label">Secondes</span></div>
+    </div>
+  </div>
+
+  <script>
+    function createParticles() {
+      const particle = document.createElement('div');
+      particle.classList.add('particle');
+      particle.style.left = Math.random() * 100 + 'vw';
+      particle.style.animationDuration = 25 + Math.random() * 35 + 's';
+      document.body.appendChild(particle);
+      setTimeout(() => particle.remove(), 60000);
+    }
+    setInterval(createParticles, 100);
+
+    const targetDate = new Date(2026, 5, 7, 9, 27, 0);
+
+    function updateCountdown() {
+      const now = new Date();
+      let diff = now - targetDate;
+      const past = diff >= 0;
+      diff = Math.abs(diff);
+
+      const days = Math.floor(diff / (1000*60*60*24));
+      const hours = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+      const minutes = Math.floor((diff % (1000*60*60)) / (1000*60));
+      const seconds = Math.floor((diff % (1000*60)) / 1000);
+
+      document.getElementById('days').textContent = String(days).padStart(2,'0');
+      document.getElementById('hours').textContent = String(hours).padStart(2,'0');
+      document.getElementById('minutes').textContent = String(minutes).padStart(2,'0');
+      document.getElementById('seconds').textContent = String(seconds).padStart(2,'0');
+
+      const color = past ? '#3a0000' : '#6b0000';
+      document.querySelectorAll('.number').forEach(n => n.style.color = color);
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  </script>
+</body>
+</html>
